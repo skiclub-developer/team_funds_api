@@ -32,6 +32,29 @@ class TeamFundsBot : AbilityBot(BOT_TOKEN, BOT_USERNAME) {
         return result
     }
 
+    fun openPenalties(): Ability {
+        return Ability
+                .builder()
+                .name("offen")
+                .locality(Locality.ALL)
+                .privacy(Privacy.PUBLIC)
+                .action { messageContext ->
+                    val listOfTransactions = mutableListOf<String>()
+                    val players = messageContext.firstArg().split(",")
+                    players.forEach {
+                        val userRecord = UserService.instance.getByName(it)
+                        if (userRecord != null) {
+                            listOfTransactions.add("${userRecord.name}s Strafen belaufen sich auf ${userRecord.currentPenalties}€" +
+                                    " und er muss noch ${userRecord.caseOfBeer} Kisten schmeißen!")
+                        } else {
+                            listOfTransactions.add("${it} befindet sich nicht in unserer Datenbank")
+                        }
+                    }
+                    listOfTransactions.forEach { silent.send(it, messageContext.chatId()) }
+                }
+                .build()
+    }
+
     fun payCrateOfBeer(): Ability {
         return Ability
                 .builder()
@@ -101,8 +124,10 @@ class TeamFundsBot : AbilityBot(BOT_TOKEN, BOT_USERNAME) {
                                     listOfTransactions.add("${name} wurde die Strafe ${penaltyRecord.penaltyName}" +
                                             "${amount} mal hinzugefügt")
                                 }
+                                listOfTransactions.add("${name}s Strafen belaufen sich auf ${userRecord.currentPenalties}€" +
+                                        " und er muss noch ${userRecord.caseOfBeer} Kisten schmeißen!")
                             } else {
-                                silent.send("Der Spieler befindet sich nicht in unserer Datenbank", messageContext.chatId())
+                                listOfTransactions.add("${name} befindet sich nicht in unserer Datenbank")
                             }
                             listOfTransactions.add("----------------------------------------------")
                         }

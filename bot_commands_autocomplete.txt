@@ -23,3 +23,4 @@ pinkelnindusche - 5€
 torschussseitenaus - Kiste
 bezahlen - Gib an wie viel der jeweilige Spieler bezahlt hat -> Patrick10,Robin20
 bezahlenkiste - Gib an wie viele Kisten der jeweilige Spieler geschmissen hat -> Patrick1,Robin2
+offen - Gibt an wie viel € an Strafen und wie viele Kisten die Spieler noch offen haben -> Patrick,Robin
