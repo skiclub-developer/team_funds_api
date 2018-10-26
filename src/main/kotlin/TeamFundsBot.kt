@@ -1,3 +1,4 @@
+import de.pengelkes.jooq.model.tables.Users
 import de.pengelkes.jooq.model.tables.records.PenaltiesRecord
 import org.telegram.abilitybots.api.bot.AbilityBot
 import org.telegram.abilitybots.api.objects.Ability
@@ -31,17 +32,38 @@ class TeamFundsBot : AbilityBot(BOT_TOKEN, BOT_USERNAME) {
         return result
     }
 
+    fun payCrateOfBeer(): Ability {
+        return Ability
+                .builder()
+                .name("bezahlenkiste")
+                .locality(Locality.ALL)
+                .privacy(Privacy.PUBLIC)
+                .action {messageContext ->
+                    val playerAmounts = getPlayersAndAmount(messageContext.firstArg())
+                    val listOfTransactions = mutableListOf<String>()
+                    playerAmounts.forEach { (name, amount) ->
+                        listOfTransactions.add(" ${name} hat ${amount} Kisten geschmissen!")
+                        UserService.instance.pay(name, amount, Users.USERS.CASE_OF_BEER)
+                    }
+                    listOfTransactions.forEach { silent.send(it, messageContext.chatId()) }
+                }
+                .build()
+    }
+
     fun pay(): Ability {
         return Ability
                 .builder()
                 .name("bezahlen")
                 .locality(Locality.ALL)
                 .privacy(Privacy.PUBLIC)
-                .action {
-                    val playerAmounts = getPlayersAndAmount(it.firstArg())
+                .action { messageContext ->
+                    val playerAmounts = getPlayersAndAmount(messageContext.firstArg())
+                    val listOfTransactions = mutableListOf<String>()
                     playerAmounts.forEach { (name, amount) ->
-                        UserService.instance.pay(name, amount)
+                        listOfTransactions.add("${name} hat ${amount}€ bezahlt!")
+                        UserService.instance.pay(name, amount, Users.USERS.CURRENT_PENALTIES)
                     }
+                    listOfTransactions.forEach { silent.send(it, messageContext.chatId()) }
                 }
                 .build()
     }
@@ -63,7 +85,7 @@ class TeamFundsBot : AbilityBot(BOT_TOKEN, BOT_USERNAME) {
                             val numberOfCasesOfBeer = amount * penaltyRecord.caseOfBeerCost
                             val userRecord = UserService.instance.getByName(name)
                             if (userRecord != null) {
-                                listOfTransactions.add("Update Strafen für Spieler ${userRecord.name}")
+                                listOfTransactions.add("Update Strafen für  ${userRecord.name}")
                                 userRecord.currentPenalties = userRecord.currentPenalties + cost
                                 userRecord.caseOfBeer = userRecord.caseOfBeer + numberOfCasesOfBeer
                                 listOfTransactions.add("${name}s Strafen wurden um ${cost}€ und seine Kistenanzahl" +

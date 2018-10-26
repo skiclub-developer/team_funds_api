@@ -4,6 +4,7 @@ import de.pengelkes.jooq.model.tables.Users
 import de.pengelkes.jooq.model.tables.Users.*
 import de.pengelkes.jooq.model.tables.records.UsersRecord
 import org.jooq.Record
+import org.jooq.TableField
 
 class UserService private constructor() {
     private object Holder {
@@ -21,9 +22,9 @@ class UserService private constructor() {
                 .execute()
     }
 
-    fun pay(name: String, amount: Int) {
+    fun pay(name: String, amount: Int, field: TableField<UsersRecord, Int>) {
         Jooq.instance.update(USERS)
-                .set(USERS.CURRENT_PENALTIES, USERS.CURRENT_PENALTIES - amount)
+                .set(field, field - amount)
                 .where(USERS.NAME.eq(name))
                 .execute()
     }
