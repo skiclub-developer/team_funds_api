@@ -1,6 +1,7 @@
 package service
 
 import de.pengelkes.jooq.model.tables.Users
+import de.pengelkes.jooq.model.tables.Users.*
 import de.pengelkes.jooq.model.tables.records.UsersRecord
 import org.jooq.Record
 
@@ -14,14 +15,21 @@ class UserService private constructor() {
     }
 
     fun updateUser(name: String, record: UsersRecord) {
-        Jooq.instance.update(Users.USERS)
+        Jooq.instance.update(USERS)
                 .set(record)
-                .where(Users.USERS.NAME.eq(name))
+                .where(USERS.NAME.eq(name))
+                .execute()
+    }
+
+    fun pay(name: String, amount: Int) {
+        Jooq.instance.update(USERS)
+                .set(USERS.CURRENT_PENALTIES, USERS.CURRENT_PENALTIES - amount)
+                .where(USERS.NAME.eq(name))
                 .execute()
     }
 
     fun getByName(name: String): UsersRecord? {
-        val record = Jooq.instance.select().from(Users.USERS).where(Users.USERS.NAME.eq(name)).fetchOne()
+        val record = Jooq.instance.select().from(USERS).where(USERS.NAME.eq(name)).fetchOne()
         if (record != null) {
             return record.into(UsersRecord::class.java)
         }

@@ -1,7 +1,4 @@
-import de.pengelkes.jooq.model.tables.Penalties
-import de.pengelkes.jooq.model.tables.Users
 import de.pengelkes.jooq.model.tables.records.PenaltiesRecord
-import de.pengelkes.jooq.model.tables.records.UsersRecord
 import org.telegram.abilitybots.api.bot.AbilityBot
 import org.telegram.abilitybots.api.objects.Ability
 import org.telegram.abilitybots.api.objects.Locality
@@ -16,6 +13,39 @@ val BOT_USERNAME = "mannschaftskasse_skiclub_bot"
 class TeamFundsBot : AbilityBot(BOT_TOKEN, BOT_USERNAME) {
     override fun creatorId() = 704551541
 
+    private fun getPlayersAndAmount(message: String): List<PlayerAmountModel> {
+        val result = mutableListOf<PlayerAmountModel>()
+        val players = message.split(",")
+        players.forEach {
+            var counter = 1;
+            while (it.substring(it.length - counter, it.length - counter + 1).single().isDigit()) {
+                counter++
+            }
+            counter--
+            val amount = it.substring(it.length - counter).toInt();
+
+            val name = it.substring(0, it.length - counter)
+            result.add(PlayerAmountModel(name, amount))
+        }
+
+        return result
+    }
+
+    fun pay(): Ability {
+        return Ability
+                .builder()
+                .name("bezahlen")
+                .locality(Locality.ALL)
+                .privacy(Privacy.PUBLIC)
+                .action {
+                    val playerAmounts = getPlayersAndAmount(it.firstArg())
+                    playerAmounts.forEach { (name, amount) ->
+                        UserService.instance.pay(name, amount)
+                    }
+                }
+                .build()
+    }
+
     fun addPenalty(): List<Ability> {
         val abilities = mutableListOf<Ability>()
         PenaltyService.instance.getAll().forEach { result ->
@@ -27,11 +57,8 @@ class TeamFundsBot : AbilityBot(BOT_TOKEN, BOT_USERNAME) {
                     .privacy(Privacy.PUBLIC)
                     .action { messageContext ->
                         val listOfTransactions = mutableListOf<String>()
-                        val argument = messageContext.firstArg()
-                        val members = argument.split(",")
-                        members.forEach { member ->
-                            val amount = member.substring(member.length - 1).toInt()
-                            val name = member.substring(0, member.length - 1)
+                        val playerAmounts = getPlayersAndAmount(messageContext.firstArg())
+                        playerAmounts.forEach { (name, amount) ->
                             val cost = amount * penaltyRecord.penaltyCost
                             val numberOfCasesOfBeer = amount * penaltyRecord.caseOfBeerCost
                             val userRecord = UserService.instance.getByName(name)
@@ -67,3 +94,5 @@ class TeamFundsBot : AbilityBot(BOT_TOKEN, BOT_USERNAME) {
         return abilities
     }
 }
+
+data class PlayerAmountModel constructor(val name: String, val amount: Int)
