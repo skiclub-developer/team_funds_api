@@ -32,6 +32,23 @@ class TeamFundsBot : AbilityBot(BOT_TOKEN, BOT_USERNAME) {
         return result
     }
 
+    fun listAllPlayers(): Ability {
+        return Ability
+                .builder()
+                .name("zeigespieler")
+                .locality(Locality.ALL)
+                .privacy(Privacy.PUBLIC)
+                .action {
+                    val players = UserService.instance.getAll()
+                    var playerNames = ""
+                    players.forEach {
+                        playerNames = playerNames + it.name + ","
+                    }
+                    silent.send(playerNames, it.chatId())
+                }
+                .build()
+    }
+
     fun openPenalties(): Ability {
         return Ability
                 .builder()

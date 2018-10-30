@@ -15,6 +15,16 @@ class UserService private constructor() {
         val instance: UserService by lazy { Holder.OBJECT }
     }
 
+    fun getAll(): List<UsersRecord> {
+        val userRecords = mutableListOf<UsersRecord>()
+        val result = Jooq.instance.select().from(USERS).fetch()
+        result.forEach {
+            userRecords.add(it.into(UsersRecord::class.java))
+        }
+
+        return userRecords
+    }
+
     fun updateUser(name: String, record: UsersRecord) {
         Jooq.instance.update(USERS)
                 .set(record)
