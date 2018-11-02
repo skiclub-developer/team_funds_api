@@ -42,7 +42,7 @@ class TeamFundsBot : AbilityBot(BOT_TOKEN, BOT_USERNAME) {
                     val players = UserService.instance.getAll()
                     var playerNames = ""
                     players.forEach {
-                        playerNames = playerNames + it.name + ","
+                        playerNames = playerNames + it.name + "\n"
                     }
                     silent.send(playerNames, it.chatId())
                 }

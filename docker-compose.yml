@@ -4,6 +4,8 @@ services:
   db:
     image: mysql
     restart: always
+    volumes:
+      - data-volume:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: team_funds
@@ -12,5 +14,13 @@ services:
 
   bot:
     image: team_funds
+    environment:
+      ENV: docker
+      DB_URL: jdbc:mysql://db:3306/team_funds
+      DB_USER: root
+      DB_PASSWORD: root
     depends_on:
       - db
+
+volumes:
+  data-volume:

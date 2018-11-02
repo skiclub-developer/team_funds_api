@@ -13,13 +13,8 @@ import java.sql.DriverManager
 class Jooq private constructor() {
 
     private object Holder {
-
-        val userName = System.getenv("db_user")
-        val password = System.getenv("db_password")
-        val url = System.getenv("db_url")
-        //        val url = "jdbc:mysql://db:3306/team_funds?serverTimezone=UTC"
         val connection = try {
-            if (System.getProperty(ENV).equals(LOCAL)) {
+            if (System.getProperty(ENV) != null && System.getProperty(ENV).equals(LOCAL)) {
                 DriverManager.getConnection(
                         System.getProperty(DB_URL),
                         System.getProperty(DB_USER),

@@ -3,11 +3,12 @@ import org.telegram.telegrambots.meta.TelegramBotsApi
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException
 import service.FlywayService
 
-val DB_USER = "db_user"
-val DB_PASSWORD = "db_password"
-val DB_URL = "db_url"
-val ENV = "env"
-val LOCAL = "local"
+val DB_USER = "DB_USER"
+val DB_PASSWORD = "DB_PASSWORD"
+val DB_URL = "DB_URL"
+val ENV = "ENV"
+val LOCAL = "LOCAL"
+
 
 fun main() {
     FlywayService.instance.migrate()

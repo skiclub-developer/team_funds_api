@@ -9,7 +9,7 @@ import org.flywaydb.core.Flyway
 
 class FlywayService private constructor() {
     private object Holder {
-        val OBJECT = if (System.getProperty(ENV).equals(LOCAL)) {
+        val OBJECT = if (System.getProperty(ENV) != null && System.getProperty(ENV).equals(LOCAL)) {
             Flyway
                     .configure()
                     .dataSource(System.getProperty(DB_URL),

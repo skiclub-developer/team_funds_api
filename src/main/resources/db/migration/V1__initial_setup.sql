@@ -74,19 +74,43 @@ CREATE TABLE `users`
 (
   `id`                int(11) NOT NULL,
   `name`              varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
-  `current_penalties` int(11) NOT NULL,
-  `case_of_beer`      int(11) NOT NULL
+  `current_penalties` int(11) NOT NULL DEFAULT 0,
+  `case_of_beer`      int(11) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Daten für Tabelle `users`
 --
 
-INSERT INTO `users` (`id`, `name`, `current_penalties`, `case_of_beer`)
+INSERT INTO `users` (`id`, `name`)
 VALUES
-       (1, 'Patrick', -4, -4),
-       (2, 'Robin', -29, -6),
-       (3, 'Jansi', 6, 0);
+       (1, 'Katze'),
+       (2, 'Christian'),
+       (3, 'Daniel'),
+       (4, 'Zachi'),
+       (5, 'Giaco'),
+       (6, 'Horst'),
+       (7, 'Ingo'),
+       (8, 'Jan'),
+       (9, 'Jansi'),
+       (10, 'Jens'),
+       (11, 'Joel'),
+       (12, 'Dete'),
+       (13, 'Julian'),
+       (14, 'Ken'),
+       (15, 'Celo'),
+       (16, 'Matze'),
+       (17, 'Schnitzke'),
+       (18, 'Hecki'),
+       (19, 'Kocki'),
+       (20, 'Ricardo'),
+       (21, 'Robin'),
+       (22, 'Thomas'),
+       (23, 'Schaddi'),
+       (24, 'Tobi'),
+       (25, 'Max'),
+       (26, 'Spölle'),
+       (27, 'Patti');
 
 -- --------------------------------------------------------
 
@@ -101,21 +125,6 @@ CREATE TABLE `user_penalties`
   `penalty_id` int(11) NOT NULL,
   `amount`     int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Daten für Tabelle `user_penalties`
---
-
-INSERT INTO `user_penalties` (`id`, `user_id`, `penalty_id`, `amount`)
-VALUES
-       (1, 1, 1, 27),
-       (2, 2, 2, 9),
-       (3, 1, 2, 4),
-       (4, 3, 2, 2),
-       (5, 3, 1, 2),
-       (6, 1, 5, 1),
-       (7, 1, 23, 1),
-       (8, 2, 1, 10);
 
 --
 -- Indizes der exportierten Tabellen
