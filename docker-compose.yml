@@ -2,8 +2,9 @@ version: '3.1'
 
 services:
   db:
-    image: mysql
+    image: mysql:5.7
     restart: always
+    command: --default-authentication-plugin=mysql_native_password
     volumes:
       - data-volume:/var/lib/mysql
     environment:
@@ -13,12 +14,13 @@ services:
       - 3307:3306
 
   bot:
-    image: team_funds
+    image: skiclubdeveloper/team_funds
     environment:
       ENV: docker
       DB_URL: jdbc:mysql://db:3306/team_funds
       DB_USER: root
       DB_PASSWORD: root
+    restart: on-failure
     depends_on:
       - db
 
