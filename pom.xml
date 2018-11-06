@@ -6,7 +6,7 @@
 
     <groupId>de.pengelkes</groupId>
     <artifactId>team_funds_api</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
 
     <properties>
         <kotlin.version>1.3.0-rc-198</kotlin.version>
