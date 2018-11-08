@@ -1,6 +1,7 @@
 package service
 
 import de.pengelkes.jooq.model.tables.UserPenaltyPayments.USER_PENALTY_PAYMENTS
+import de.pengelkes.jooq.model.tables.records.UserPenaltyPaymentsRecord
 import java.sql.Date
 
 class UserPenaltyPaymentService private constructor() {
@@ -18,5 +19,12 @@ class UserPenaltyPaymentService private constructor() {
                 .set(USER_PENALTY_PAYMENTS.AMOUNT, amount)
                 .set(USER_PENALTY_PAYMENTS.PAID_AT, Date(System.currentTimeMillis()))
                 .execute()
+    }
+
+    fun getPaymentsForUser(userId: Int): List<UserPenaltyPaymentsRecord> {
+        return Jooq.instance.select().from(USER_PENALTY_PAYMENTS)
+                .where(USER_PENALTY_PAYMENTS.USER_ID.eq(userId))
+                .orderBy(USER_PENALTY_PAYMENTS.PAID_AT.desc())
+                .fetchInto(UserPenaltyPaymentsRecord::class.java)
     }
 }

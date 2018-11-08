@@ -27,6 +27,48 @@ class TeamFundsBot constructor(val envBotToken: String, val botName: String) : A
         return result
     }
 
+    fun listPaymentsOfPlayer(): Ability {
+        return Ability
+                .builder()
+                .name("listeallerzahlungen")
+                .locality(Locality.ALL)
+                .privacy(Privacy.PUBLIC)
+                .action { messageContext ->
+                    val playerName = messageContext.firstArg()
+                    val player = UserService.instance.getByName(playerName)
+                    if (player != null) {
+                        val payments = UserPenaltyPaymentService.instance.getPaymentsForUser(player.id)
+                        payments.forEach {
+                            silent.send("${playerName} hat am ${it.paidAt} ${it.amount}€ gezahlt", messageContext.chatId())
+                        }
+                    } else {
+                        silent.send("Der Spieler ${playerName} befindet sich nicht in unserer Datenbnak", messageContext.chatId())
+                    }
+                }
+                .build()
+    }
+
+    fun listBeerPaymentsOfPlayer(): Ability {
+        return Ability
+                .builder()
+                .name("listeallerbierzahlungen")
+                .locality(Locality.ALL)
+                .privacy(Privacy.PUBLIC)
+                .action { messageContext ->
+                    val playerName = messageContext.firstArg()
+                    val player = UserService.instance.getByName(playerName)
+                    if (player != null) {
+                        val payments = UserPenaltyBeerPaymentService.instance.getPaymentsForUser(player.id)
+                        payments.forEach {
+                            silent.send("${playerName} hat am ${it.paidAt} ${it.amount} Kiste(n) geschmissen", messageContext.chatId())
+                        }
+                    } else {
+                        silent.send("Der Spieler ${playerName} befindet sich nicht in unserer Datenbnak", messageContext.chatId())
+                    }
+                }
+                .build()
+    }
+
     fun listAllPlayers(): Ability {
         return Ability
                 .builder()
