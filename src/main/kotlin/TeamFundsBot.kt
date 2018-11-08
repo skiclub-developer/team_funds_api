@@ -4,10 +4,7 @@ import org.telegram.abilitybots.api.bot.AbilityBot
 import org.telegram.abilitybots.api.objects.Ability
 import org.telegram.abilitybots.api.objects.Locality
 import org.telegram.abilitybots.api.objects.Privacy
-import service.PenaltyService
-import service.UserPenaltyPaymentService
-import service.UserPenaltyService
-import service.UserService
+import service.*
 
 class TeamFundsBot constructor(val envBotToken: String, val botName: String) : AbilityBot(envBotToken, botName) {
     override fun creatorId() = 704551541
@@ -80,8 +77,16 @@ class TeamFundsBot constructor(val envBotToken: String, val botName: String) : A
                     val playerAmounts = getPlayersAndAmount(messageContext.firstArg())
                     val listOfTransactions = mutableListOf<String>()
                     playerAmounts.forEach { (name, amount) ->
-                        listOfTransactions.add(" ${name} hat ${amount} Kisten geschmissen!")
-                        UserService.instance.pay(name, amount, Users.USERS.CASE_OF_BEER)
+                        val user = UserService.instance.getByName(name)
+                        if (user != null) {
+                            listOfTransactions.add(" ${name} hat ${amount} Kisten geschmissen!")
+                            UserService.instance.pay(name, amount, Users.USERS.CASE_OF_BEER)
+                            UserPenaltyBeerPaymentService.instance.pay(user.id, amount)
+                        } else {
+                            listOfTransactions.add("${name} konnte NICHT in der Datenbank gefunden werden. Bezahlung " +
+                                    "erneut durchführen!!!")
+                        }
+
                     }
                     listOfTransactions.forEach { silent.send(it, messageContext.chatId()) }
                 }
