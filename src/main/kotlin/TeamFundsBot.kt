@@ -5,6 +5,7 @@ import org.telegram.abilitybots.api.objects.Ability
 import org.telegram.abilitybots.api.objects.Locality
 import org.telegram.abilitybots.api.objects.Privacy
 import service.PenaltyService
+import service.UserPenaltyPaymentService
 import service.UserPenaltyService
 import service.UserService
 
@@ -97,8 +98,15 @@ class TeamFundsBot constructor(val envBotToken: String, val botName: String) : A
                     val playerAmounts = getPlayersAndAmount(messageContext.firstArg())
                     val listOfTransactions = mutableListOf<String>()
                     playerAmounts.forEach { (name, amount) ->
-                        listOfTransactions.add("${name} hat ${amount}€ bezahlt!")
-                        UserService.instance.pay(name, amount, Users.USERS.CURRENT_PENALTIES)
+                        val user = UserService.instance.getByName(name)
+                        if (user != null) {
+                            listOfTransactions.add("${name} hat ${amount}€ bezahlt!")
+                            UserService.instance.pay(name, amount, Users.USERS.CURRENT_PENALTIES)
+                            UserPenaltyPaymentService.instance.pay(user.id, amount)
+                        } else {
+                            listOfTransactions.add("${name} konnte NICHT in der Datenbank gefunden werden. Bezahlung " +
+                                    "erneut durchführen!!!")
+                        }
                     }
                     listOfTransactions.forEach { silent.send(it, messageContext.chatId()) }
                 }
