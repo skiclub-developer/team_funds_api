@@ -1,6 +1,7 @@
 package service
 
 import de.pengelkes.jooq.model.tables.UserPenaltyPayments.USER_PENALTY_PAYMENTS
+import java.sql.Date
 
 class UserPenaltyPaymentService private constructor() {
     object Holder {
@@ -15,6 +16,7 @@ class UserPenaltyPaymentService private constructor() {
         Jooq.instance.insertInto(USER_PENALTY_PAYMENTS)
                 .set(USER_PENALTY_PAYMENTS.USER_ID, userId)
                 .set(USER_PENALTY_PAYMENTS.AMOUNT, amount)
+                .set(USER_PENALTY_PAYMENTS.PAID_AT, Date(System.currentTimeMillis()))
                 .execute()
     }
 }
