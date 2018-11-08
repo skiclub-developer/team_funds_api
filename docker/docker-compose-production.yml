@@ -16,10 +16,11 @@ services:
   bot:
     image: skiclubdeveloper/team_funds
     environment:
-      ENV: docker
-      DB_URL: jdbc:mysql://db:3306/team_funds
-      DB_USER: root
-      DB_PASSWORD: root
+      TEAM_FUNDS_DB_URL: ${TEAM_FUNDS_DB_URL}
+      TEAM_FUNDS_DB_USER: ${TEAM_FUNDS_DB_USER}
+      TEAM_FUNDS_DB_PASSWORD: ${TEAM_FUNDS_DB_PASSWORD}
+      TEAM_FUNDS_BOT_TOKEN: ${TEAM_FUNDS_BOT_TOKEN}
+      TEAM_FUNDS_BOT_NAME: ${TEAM_FUNDS_BOT_NAME}
     restart: on-failure
     depends_on:
       - db

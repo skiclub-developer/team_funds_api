@@ -3,11 +3,13 @@ import org.telegram.telegrambots.meta.TelegramBotsApi
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException
 import service.FlywayService
 
-val DB_USER = "DB_USER"
-val DB_PASSWORD = "DB_PASSWORD"
-val DB_URL = "DB_URL"
-val ENV = "ENV"
-val LOCAL = "LOCAL"
+val DB_USER = "TEAM_FUNDS_DB_USER"
+val DB_PASSWORD = "TEAM_FUNDS_DB_PASSWORD"
+val DB_URL = "TEAM_FUNDS_DB_URL"
+val ENV = "TEAM_FUNDS_ENV"
+val LOCAL = "TEAM_FUNDS_LOCAL"
+val BOT_TOKEN = "TEAM_FUNDS_BOT_TOKEN"
+val BOT_NAME = "TEAM_FUNDS_BOT_NAME"
 
 
 fun main() {
@@ -17,8 +19,11 @@ fun main() {
 
     val botsApi = TelegramBotsApi()
 
+    val botToken = System.getenv(BOT_TOKEN)
+    val botName = System.getenv(BOT_NAME)
+
     try {
-        botsApi.registerBot(TeamFundsBot())
+        botsApi.registerBot(TeamFundsBot(botToken, botName))
     } catch (e: TelegramApiException) {
         e.printStackTrace()
     }

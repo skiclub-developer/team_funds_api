@@ -8,10 +8,7 @@ import service.PenaltyService
 import service.UserPenaltyService
 import service.UserService
 
-val BOT_TOKEN = "756737895:AAG1P4tnW6PRnrAI5wVkzr-zvHkLFTcyh54"
-val BOT_USERNAME = "mannschaftskasse_skiclub_bot"
-
-class TeamFundsBot : AbilityBot(BOT_TOKEN, BOT_USERNAME) {
+class TeamFundsBot constructor(val envBotToken: String, val botName: String) : AbilityBot(envBotToken, botName) {
     override fun creatorId() = 704551541
 
     private fun getPlayersAndAmount(message: String): List<PlayerAmountModel> {
