@@ -13,8 +13,8 @@ class TeamFundsBot constructor(val envBotToken: String, val botName: String) : A
         return Ability
                 .builder()
                 .name("betragplus")
-                .locality(Locality.ALL)
-                .privacy(Privacy.PUBLIC)
+                .locality(Locality.GROUP)
+                .privacy(Privacy.GROUP_ADMIN)
                 .action { messageContext ->
                     val listOfTransactions = mutableListOf<String>()
                     messageContext.firstArg().getPlayersAndAmounts().forEach { (name, amount) ->
@@ -36,8 +36,8 @@ class TeamFundsBot constructor(val envBotToken: String, val botName: String) : A
         return Ability
                 .builder()
                 .name("kisteplus")
-                .locality(Locality.ALL)
-                .privacy(Privacy.PUBLIC)
+                .locality(Locality.GROUP)
+                .privacy(Privacy.GROUP_ADMIN)
                 .action { messageContext ->
                     val listOfTransactions = mutableListOf<String>()
                     messageContext.firstArg().getPlayersAndAmounts().forEach { (name, amount) ->
@@ -59,7 +59,7 @@ class TeamFundsBot constructor(val envBotToken: String, val botName: String) : A
         return Ability
                 .builder()
                 .name("listeallerzahlungen")
-                .locality(Locality.ALL)
+                .locality(Locality.GROUP)
                 .privacy(Privacy.PUBLIC)
                 .action { messageContext ->
                     val playerName = messageContext.firstArg()
@@ -80,7 +80,7 @@ class TeamFundsBot constructor(val envBotToken: String, val botName: String) : A
         return Ability
                 .builder()
                 .name("listeallerbierzahlungen")
-                .locality(Locality.ALL)
+                .locality(Locality.GROUP)
                 .privacy(Privacy.PUBLIC)
                 .action { messageContext ->
                     val playerName = messageContext.firstArg()
@@ -101,7 +101,7 @@ class TeamFundsBot constructor(val envBotToken: String, val botName: String) : A
         return Ability
                 .builder()
                 .name("zeigespieler")
-                .locality(Locality.ALL)
+                .locality(Locality.GROUP)
                 .privacy(Privacy.PUBLIC)
                 .action {
                     val players = UserService.instance.getAll()
@@ -118,7 +118,7 @@ class TeamFundsBot constructor(val envBotToken: String, val botName: String) : A
         return Ability
                 .builder()
                 .name("offen")
-                .locality(Locality.ALL)
+                .locality(Locality.GROUP)
                 .privacy(Privacy.PUBLIC)
                 .action { messageContext ->
                     val listOfTransactions = mutableListOf<String>()
@@ -141,8 +141,8 @@ class TeamFundsBot constructor(val envBotToken: String, val botName: String) : A
         return Ability
                 .builder()
                 .name("bezahlenkiste")
-                .locality(Locality.ALL)
-                .privacy(Privacy.PUBLIC)
+                .locality(Locality.GROUP)
+                .privacy(Privacy.GROUP_ADMIN)
                 .action {messageContext ->
                     val listOfTransactions = mutableListOf<String>()
                     messageContext.firstArg().getPlayersAndAmounts().forEach { (name, amount) ->
@@ -166,8 +166,8 @@ class TeamFundsBot constructor(val envBotToken: String, val botName: String) : A
         return Ability
                 .builder()
                 .name("bezahlen")
-                .locality(Locality.ALL)
-                .privacy(Privacy.PUBLIC)
+                .locality(Locality.GROUP)
+                .privacy(Privacy.GROUP_ADMIN)
                 .action { messageContext ->
                     val listOfTransactions = mutableListOf<String>()
                     messageContext.firstArg().getPlayersAndAmounts().forEach { (name, amount) ->
@@ -193,8 +193,8 @@ class TeamFundsBot constructor(val envBotToken: String, val botName: String) : A
             val ability = Ability
                     .builder()
                     .name(penaltyRecord.penaltyName.toLowerCase())
-                    .locality(Locality.ALL)
-                    .privacy(Privacy.PUBLIC)
+                    .locality(Locality.GROUP)
+                    .privacy(Privacy.GROUP_ADMIN)
                     .action { messageContext ->
                         val listOfTransactions = mutableListOf<String>()
                         messageContext.firstArg().getPlayersAndAmounts().forEach { (name, amount) ->
