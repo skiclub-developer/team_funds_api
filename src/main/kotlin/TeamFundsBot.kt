@@ -9,22 +9,50 @@ import service.*
 class TeamFundsBot constructor(val envBotToken: String, val botName: String) : AbilityBot(envBotToken, botName) {
     override fun creatorId() = 704551541
 
-    private fun getPlayersAndAmount(message: String): List<PlayerAmountModel> {
-        val result = mutableListOf<PlayerAmountModel>()
-        val players = message.split(",")
-        players.forEach {
-            var counter = 1;
-            while (it.substring(it.length - counter, it.length - counter + 1).single().isDigit()) {
-                counter++
-            }
-            counter--
-            val amount = it.substring(it.length - counter).toInt();
+    fun addArbitraryPenalty(): Ability {
+        return Ability
+                .builder()
+                .name("betragplus")
+                .locality(Locality.ALL)
+                .privacy(Privacy.PUBLIC)
+                .action { messageContext ->
+                    val listOfTransactions = mutableListOf<String>()
+                    messageContext.firstArg().getPlayersAndAmounts().forEach { (name, amount) ->
+                        val player = UserService.instance.getByName(name)
+                        if (player != null) {
+                            UserService.instance.addPenalty(player.id, amount, Users.USERS.CURRENT_PENALTIES)
+                            listOfTransactions.add("Spieler ${name} wurden ${amount}€ zu seinen Strafen hinzugefügt")
+                        } else {
+                            listOfTransactions.add("Spieler ${name} konnte NICHT in der Datenbank gefunden werden. " +
+                                    "Bezahlung erneut durchführen!!!")
+                        }
+                        listOfTransactions.print(silent, messageContext.chatId())
+                    }
+                }
+                .build()
+    }
 
-            val name = it.substring(0, it.length - counter)
-            result.add(PlayerAmountModel(name, amount))
-        }
-
-        return result
+    fun addArbitraryBeerPenalty(): Ability {
+        return Ability
+                .builder()
+                .name("kisteplus")
+                .locality(Locality.ALL)
+                .privacy(Privacy.PUBLIC)
+                .action { messageContext ->
+                    val listOfTransactions = mutableListOf<String>()
+                    messageContext.firstArg().getPlayersAndAmounts().forEach { (name, amount) ->
+                        val player = UserService.instance.getByName(name)
+                        if (player != null) {
+                            UserService.instance.addPenalty(player.id, amount, Users.USERS.CASE_OF_BEER)
+                            listOfTransactions.add("Spieler ${name} wurden ${amount} Kisten zu seinen Strafen hinzugefügt.")
+                        } else {
+                            listOfTransactions.add("Spieler ${name} konnte NICHT in der Datenbank gefunden werden. " +
+                                    "Bezahlung erneut durchführen!!!")
+                        }
+                    }
+                    listOfTransactions.print(silent, messageContext.chatId())
+                }
+                .build()
     }
 
     fun listPaymentsOfPlayer(): Ability {
@@ -104,7 +132,7 @@ class TeamFundsBot constructor(val envBotToken: String, val botName: String) : A
                             listOfTransactions.add("${it} befindet sich nicht in unserer Datenbank")
                         }
                     }
-                    listOfTransactions.forEach { silent.send(it, messageContext.chatId()) }
+                    listOfTransactions.print(silent, messageContext.chatId())
                 }
                 .build()
     }
@@ -116,9 +144,8 @@ class TeamFundsBot constructor(val envBotToken: String, val botName: String) : A
                 .locality(Locality.ALL)
                 .privacy(Privacy.PUBLIC)
                 .action {messageContext ->
-                    val playerAmounts = getPlayersAndAmount(messageContext.firstArg())
                     val listOfTransactions = mutableListOf<String>()
-                    playerAmounts.forEach { (name, amount) ->
+                    messageContext.firstArg().getPlayersAndAmounts().forEach { (name, amount) ->
                         val user = UserService.instance.getByName(name)
                         if (user != null) {
                             listOfTransactions.add(" ${name} hat ${amount} Kisten geschmissen!")
@@ -130,7 +157,7 @@ class TeamFundsBot constructor(val envBotToken: String, val botName: String) : A
                         }
 
                     }
-                    listOfTransactions.forEach { silent.send(it, messageContext.chatId()) }
+                    listOfTransactions.print(silent, messageContext.chatId())
                 }
                 .build()
     }
@@ -142,9 +169,8 @@ class TeamFundsBot constructor(val envBotToken: String, val botName: String) : A
                 .locality(Locality.ALL)
                 .privacy(Privacy.PUBLIC)
                 .action { messageContext ->
-                    val playerAmounts = getPlayersAndAmount(messageContext.firstArg())
                     val listOfTransactions = mutableListOf<String>()
-                    playerAmounts.forEach { (name, amount) ->
+                    messageContext.firstArg().getPlayersAndAmounts().forEach { (name, amount) ->
                         val user = UserService.instance.getByName(name)
                         if (user != null) {
                             listOfTransactions.add("${name} hat ${amount}€ bezahlt!")
@@ -155,7 +181,7 @@ class TeamFundsBot constructor(val envBotToken: String, val botName: String) : A
                                     "erneut durchführen!!!")
                         }
                     }
-                    listOfTransactions.forEach { silent.send(it, messageContext.chatId()) }
+                    listOfTransactions.print(silent, messageContext.chatId())
                 }
                 .build()
     }
@@ -171,8 +197,7 @@ class TeamFundsBot constructor(val envBotToken: String, val botName: String) : A
                     .privacy(Privacy.PUBLIC)
                     .action { messageContext ->
                         val listOfTransactions = mutableListOf<String>()
-                        val playerAmounts = getPlayersAndAmount(messageContext.firstArg())
-                        playerAmounts.forEach { (name, amount) ->
+                        messageContext.firstArg().getPlayersAndAmounts().forEach { (name, amount) ->
                             val cost = amount * penaltyRecord.penaltyCost
                             val numberOfCasesOfBeer = amount * penaltyRecord.caseOfBeerCost
                             val userRecord = UserService.instance.getByName(name)
@@ -200,7 +225,7 @@ class TeamFundsBot constructor(val envBotToken: String, val botName: String) : A
                             }
                             listOfTransactions.add("----------------------------------------------")
                         }
-                        listOfTransactions.forEach { silent.send(it, messageContext.chatId()) }
+                        listOfTransactions.print(silent, messageContext.chatId())
                     }
                     .build()
 
@@ -210,5 +235,3 @@ class TeamFundsBot constructor(val envBotToken: String, val botName: String) : A
         return abilities
     }
 }
-
-data class PlayerAmountModel constructor(val name: String, val amount: Int)

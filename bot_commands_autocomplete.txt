@@ -21,9 +21,11 @@ schussauftennisplatz - 2€
 foto - 1€
 pinkelnindusche - 5€
 torschussseitenaus - Kiste
-bezahlen - Gib an wie viel der jeweilige Spieler bezahlt hat -> Patrick10,Robin20
-bezahlenkiste - Gib an wie viele Kisten der jeweilige Spieler geschmissen hat -> Patrick1,Robin2
-offen - Gibt an wie viel € an Strafen und wie viele Kisten die Spieler noch offen haben -> Patrick,Robin
+bezahlen - Gib an wie viel der jeweilige Spieler bezahlt hat -> Patti10,Robin20
+bezahlenkiste - Gib an wie viele Kisten der jeweilige Spieler geschmissen hat -> Patti1,Robin2
+offen - Gibt an wie viel € an Strafen und wie viele Kisten die Spieler noch offen haben -> Patti,Robin
 zeigespieler - Listet alle Spieler auf für die Strafen hinzugefügt werden können
 listeallerzahlungen - Listet alle bezahlten Strafen des angegebenen Spielers auf
 listeallerbierzahlungen - Listet alle offenen Kisten des angegebenen Spielers auf
+betragplus - Fügt den aufgelisteten Spielern den bestimmten Betrag zu -> Patti10,Robin20
+kisteplus - Fügt den aufgelisteten Spielern die bestimmte Anzahl an Kisten hinzu --> Patti1,Robin1
