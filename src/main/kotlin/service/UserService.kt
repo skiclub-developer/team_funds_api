@@ -1,9 +1,7 @@
 package service
 
-import de.pengelkes.jooq.model.tables.Users
-import de.pengelkes.jooq.model.tables.Users.*
+import de.pengelkes.jooq.model.tables.Users.USERS
 import de.pengelkes.jooq.model.tables.records.UsersRecord
-import org.jooq.Record
 import org.jooq.TableField
 
 class UserService private constructor() {
@@ -36,6 +34,13 @@ class UserService private constructor() {
         Jooq.instance.update(USERS)
                 .set(field, field - amount)
                 .where(USERS.NAME.eq(name))
+                .execute()
+    }
+
+    fun addPenalty(id: Int, amount: Int, field: TableField<UsersRecord, Int>) {
+        Jooq.instance.update(USERS)
+                .set(field, field + amount)
+                .where(USERS.ID.eq(id))
                 .execute()
     }
 
