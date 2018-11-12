@@ -6,8 +6,6 @@ import service.FlywayService
 val DB_USER = "TEAM_FUNDS_DB_USER"
 val DB_PASSWORD = "TEAM_FUNDS_DB_PASSWORD"
 val DB_URL = "TEAM_FUNDS_DB_URL"
-val ENV = "TEAM_FUNDS_ENV"
-val LOCAL = "TEAM_FUNDS_LOCAL"
 val BOT_TOKEN = "TEAM_FUNDS_BOT_TOKEN"
 val BOT_NAME = "TEAM_FUNDS_BOT_NAME"
 
@@ -19,8 +17,8 @@ fun main() {
 
     val botsApi = TelegramBotsApi()
 
-    val botToken = System.getenv(BOT_TOKEN)
-    val botName = System.getenv(BOT_NAME)
+    val botToken = System.getenv(BOT_TOKEN) ?: System.getProperty(BOT_TOKEN)
+    val botName = System.getenv(BOT_NAME) ?: System.getProperty(BOT_NAME)
 
     try {
         botsApi.registerBot(TeamFundsBot(botToken, botName))

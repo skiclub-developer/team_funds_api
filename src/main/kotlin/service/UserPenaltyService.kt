@@ -1,5 +1,6 @@
 package service
 
+import de.pengelkes.jooq.model.tables.Penalties.PENALTIES
 import de.pengelkes.jooq.model.tables.UserPenalties.USER_PENALTIES
 import de.pengelkes.jooq.model.tables.records.UserPenaltiesRecord
 import java.sql.Date
@@ -18,20 +19,41 @@ class UserPenaltyService private constructor() {
                 .where(USER_PENALTIES.USER_ID.eq(userId))
                 .and(USER_PENALTIES.PENALTY_ID.eq(penaltyId)).fetchOne()
         if (result != null) {
-            return result.into(UserPenaltiesRecord::class.java)
+            return result.into(UserPenaltiesRecord())
         }
 
         return null
     }
 
-    fun createUserPenalty(userId: Int, penaltyId: Int, amount: Int, auditUser: String) {
-        val userPenalties = UserPenaltiesRecord()
-        userPenalties.amount = amount
-        userPenalties.penaltyId = penaltyId
-        userPenalties.userId = userId
-        userPenalties.createdAt = Date(System.currentTimeMillis())
-        userPenalties.changedBy = auditUser
+    fun getPenaltiesByUser(userId: Int): List<UserPenaltyListModel> {
+        val result = mutableListOf<UserPenaltyListModel>()
+        val records = Jooq.instance.select().from(USER_PENALTIES)
+                .join(PENALTIES).onKey()
+                .where(USER_PENALTIES.USER_ID.eq(userId))
+                .orderBy(USER_PENALTIES.PENALTY_ID, USER_PENALTIES.CREATED_AT.desc())
+                .fetch()
 
-        userPenalties.store()
+        records.forEach {
+            result.add(UserPenaltyListModel(
+                    it.getValue(USER_PENALTIES.AMOUNT),
+                    it.getValue(USER_PENALTIES.CREATED_AT),
+                    it.getValue(USER_PENALTIES.CHANGED_BY),
+                    it.getValue(PENALTIES.PENALTY_NAME)
+            ))
+        }
+
+        return result
+    }
+
+    fun createUserPenalty(userId: Int, penaltyId: Int, amount: Int, auditUser: String) {
+        Jooq.instance.insertInto(USER_PENALTIES)
+                .set(USER_PENALTIES.AMOUNT, amount)
+                .set(USER_PENALTIES.USER_ID, userId)
+                .set(USER_PENALTIES.PENALTY_ID, penaltyId)
+                .set(USER_PENALTIES.CREATED_AT, Date(System.currentTimeMillis()))
+                .set(USER_PENALTIES.CHANGED_BY, auditUser)
+                .execute()
     }
 }
+
+data class UserPenaltyListModel(val amount: Int, val createdAt: Date, val changedBy: String, val penaltyName: String)

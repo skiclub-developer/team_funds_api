@@ -29,3 +29,4 @@ listeallerzahlungen - Listet alle bezahlten Strafen des angegebenen Spielers auf
 listeallerbierzahlungen - Listet alle offenen Kisten des angegebenen Spielers auf
 betragplus - Fügt den aufgelisteten Spielern den bestimmten Betrag zu -> Patti10,Robin20
 kisteplus - Fügt den aufgelisteten Spielern die bestimmte Anzahl an Kisten hinzu --> Patti1,Robin1
+listeallerstrafen - Listet alle Strafen für den genannten Spieler auf

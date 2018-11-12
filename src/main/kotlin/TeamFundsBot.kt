@@ -6,6 +6,7 @@ import org.telegram.abilitybots.api.objects.Locality
 import org.telegram.abilitybots.api.objects.Privacy
 import service.*
 
+
 class TeamFundsBot constructor(val envBotToken: String, val botName: String) : AbilityBot(envBotToken, botName) {
     override fun creatorId() = 704551541
 
@@ -51,6 +52,32 @@ class TeamFundsBot constructor(val envBotToken: String, val botName: String) : A
                         }
                     }
                     listOfTransactions.print(silent, messageContext.chatId())
+                }
+                .build()
+    }
+
+    fun listPenaltiesOfPlayer(): Ability {
+        return Ability
+                .builder()
+                .name("listeallerstrafen")
+                .locality(Locality.GROUP)
+                .privacy(Privacy.PUBLIC)
+                .action { messageContext ->
+                    val listOfPenalties = mutableListOf<String>()
+                    val playerName = messageContext.firstArg()
+                    val player = UserService.instance.getByName(playerName)
+                    if (player != null) {
+                        val penalties = UserPenaltyService.instance.getPenaltiesByUser(player.id)
+                        penalties.forEach {
+                            listOfPenalties.add("Strafe ${it.penaltyName} wurde am ${it.createdAt} " +
+                                    " ${it.amount} mal hinzugefügt")
+                        }
+                    } else {
+                        listOfPenalties.add("Spieler ${messageContext.firstArg()} konnte nicht in unserer Datenbank" +
+                                "gefunden werden")
+                    }
+
+                    listOfPenalties.print(silent, messageContext.chatId())
                 }
                 .build()
     }
@@ -150,10 +177,14 @@ class TeamFundsBot constructor(val envBotToken: String, val botName: String) : A
                         if (user != null) {
                             listOfTransactions.add(" ${name} hat ${amount} Kisten geschmissen!")
                             UserService.instance.pay(name, amount, Users.USERS.CASE_OF_BEER)
+
+                            val messageUser = messageContext.user()
+                            val userName = messageUser.userName ?: messageUser.firstName+" "+messageUser.lastName
+
                             UserPenaltyBeerPaymentService.instance.pay(
-                                    user.id,
+                                    messageUser.id,
                                     amount,
-                                    messageContext.user().userName
+                                    userName
                             )
                         } else {
                             listOfTransactions.add("${name} konnte NICHT in der Datenbank gefunden werden. Bezahlung " +
@@ -179,10 +210,13 @@ class TeamFundsBot constructor(val envBotToken: String, val botName: String) : A
                         if (user != null) {
                             listOfTransactions.add("${name} hat ${amount}€ bezahlt!")
                             UserService.instance.pay(name, amount, Users.USERS.CURRENT_PENALTIES)
+
+                            val messageUser = messageContext.user()
+                            val userName = messageUser.userName ?: messageUser.firstName+" "+messageUser.lastName
                             UserPenaltyPaymentService.instance.pay(
                                     user.id,
                                     amount,
-                                    messageContext.user().userName
+                                    userName
                             )
                         } else {
                             listOfTransactions.add("${name} konnte NICHT in der Datenbank gefunden werden. Bezahlung " +
@@ -216,11 +250,14 @@ class TeamFundsBot constructor(val envBotToken: String, val botName: String) : A
                                 UserService.instance.updateUser(name, userRecord)
 
                                 //create new single penalty entry
+                                val user = messageContext.user()
+                                val userName = user.userName ?: user.firstName+" "+user.lastName
+
                                 UserPenaltyService.instance.createUserPenalty(
                                         userRecord.id,
                                         penaltyRecord.id,
                                         amount,
-                                        messageContext.user().userName
+                                        userName
                                 )
 
                                 //create bot replies
