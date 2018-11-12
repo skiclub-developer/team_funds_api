@@ -1,9 +1,8 @@
 package service
 
-import de.pengelkes.jooq.model.tables.UserPenalties
-import de.pengelkes.jooq.model.tables.UserPenalties.*
+import de.pengelkes.jooq.model.tables.UserPenalties.USER_PENALTIES
 import de.pengelkes.jooq.model.tables.records.UserPenaltiesRecord
-import org.jooq.Record
+import java.sql.Date
 
 class UserPenaltyService private constructor() {
     private object Holder {
@@ -26,19 +25,12 @@ class UserPenaltyService private constructor() {
     }
 
     fun createUserPenalty(userId: Int, penaltyId: Int, amount: Int) {
-        Jooq.instance.insertInto(USER_PENALTIES)
-                .set(USER_PENALTIES.AMOUNT, amount)
-                .set(USER_PENALTIES.PENALTY_ID, penaltyId)
-                .set(USER_PENALTIES.USER_ID, userId)
-                .execute()
-    }
+        val userPenalties = UserPenaltiesRecord()
+        userPenalties.amount = amount
+        userPenalties.penaltyId = penaltyId
+        userPenalties.userId = userId
+        userPenalties.createdAt = Date(System.currentTimeMillis())
 
-    fun updateUserPenaltyAmount(userPenaltyRecord: UserPenaltiesRecord, amount: Int) {
-        userPenaltyRecord.amount = userPenaltyRecord.amount + amount
-        Jooq.instance.update(USER_PENALTIES)
-                .set(userPenaltyRecord)
-                .where(USER_PENALTIES.USER_ID.eq(userPenaltyRecord.userId))
-                .and(USER_PENALTIES.PENALTY_ID.eq(userPenaltyRecord.penaltyId))
-                .execute()
+        userPenalties.store()
     }
 }

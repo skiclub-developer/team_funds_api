@@ -26,8 +26,8 @@ class TeamFundsBot constructor(val envBotToken: String, val botName: String) : A
                             listOfTransactions.add("Spieler ${name} konnte NICHT in der Datenbank gefunden werden. " +
                                     "Bezahlung erneut durchführen!!!")
                         }
-                        listOfTransactions.print(silent, messageContext.chatId())
                     }
+                    listOfTransactions.print(silent, messageContext.chatId())
                 }
                 .build()
     }
@@ -143,7 +143,7 @@ class TeamFundsBot constructor(val envBotToken: String, val botName: String) : A
                 .name("bezahlenkiste")
                 .locality(Locality.GROUP)
                 .privacy(Privacy.GROUP_ADMIN)
-                .action {messageContext ->
+                .action { messageContext ->
                     val listOfTransactions = mutableListOf<String>()
                     messageContext.firstArg().getPlayersAndAmounts().forEach { (name, amount) ->
                         val user = UserService.instance.getByName(name)
@@ -202,22 +202,18 @@ class TeamFundsBot constructor(val envBotToken: String, val botName: String) : A
                             val numberOfCasesOfBeer = amount * penaltyRecord.caseOfBeerCost
                             val userRecord = UserService.instance.getByName(name)
                             if (userRecord != null) {
-                                listOfTransactions.add("Update Strafen für  ${userRecord.name}")
+                                //update summed up penalties
                                 userRecord.currentPenalties = userRecord.currentPenalties + cost
                                 userRecord.caseOfBeer = userRecord.caseOfBeer + numberOfCasesOfBeer
+                                UserService.instance.updateUser(name, userRecord)
+
+                                //create new single penalty entry
+                                UserPenaltyService.instance.createUserPenalty(userRecord.id, penaltyRecord.id, amount)
+
+                                //create bot replies
+                                listOfTransactions.add("Update Strafen für  ${userRecord.name}")
                                 listOfTransactions.add("${name}s Strafen wurden um ${cost}€ und seine Kistenanzahl" +
                                         " um ${numberOfCasesOfBeer} erhöht")
-                                UserService.instance.updateUser(name, userRecord)
-                                val userPenaltyRecord = UserPenaltyService.instance.getUserPenalty(userRecord.id, penaltyRecord.id)
-                                if (userPenaltyRecord != null) {
-                                    UserPenaltyService.instance.updateUserPenaltyAmount(userPenaltyRecord, amount)
-                                    listOfTransactions.add("${name} wurde die Strafe ${penaltyRecord.penaltyName}" +
-                                            " ${amount} mal hinzugefügt")
-                                } else {
-                                    UserPenaltyService.instance.createUserPenalty(userRecord.id, penaltyRecord.id, amount)
-                                    listOfTransactions.add("${name} wurde die Strafe ${penaltyRecord.penaltyName}" +
-                                            "${amount} mal hinzugefügt")
-                                }
                                 listOfTransactions.add("${name}s Strafen belaufen sich auf ${userRecord.currentPenalties}€" +
                                         " und er muss noch ${userRecord.caseOfBeer} Kisten schmeißen!")
                             } else {
