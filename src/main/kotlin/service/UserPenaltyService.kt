@@ -24,12 +24,13 @@ class UserPenaltyService private constructor() {
         return null
     }
 
-    fun createUserPenalty(userId: Int, penaltyId: Int, amount: Int) {
+    fun createUserPenalty(userId: Int, penaltyId: Int, amount: Int, auditUser: String) {
         val userPenalties = UserPenaltiesRecord()
         userPenalties.amount = amount
         userPenalties.penaltyId = penaltyId
         userPenalties.userId = userId
         userPenalties.createdAt = Date(System.currentTimeMillis())
+        userPenalties.changedBy = auditUser
 
         userPenalties.store()
     }

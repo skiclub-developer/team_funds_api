@@ -150,7 +150,11 @@ class TeamFundsBot constructor(val envBotToken: String, val botName: String) : A
                         if (user != null) {
                             listOfTransactions.add(" ${name} hat ${amount} Kisten geschmissen!")
                             UserService.instance.pay(name, amount, Users.USERS.CASE_OF_BEER)
-                            UserPenaltyBeerPaymentService.instance.pay(user.id, amount)
+                            UserPenaltyBeerPaymentService.instance.pay(
+                                    user.id,
+                                    amount,
+                                    messageContext.user().userName
+                            )
                         } else {
                             listOfTransactions.add("${name} konnte NICHT in der Datenbank gefunden werden. Bezahlung " +
                                     "erneut durchführen!!!")
@@ -175,7 +179,11 @@ class TeamFundsBot constructor(val envBotToken: String, val botName: String) : A
                         if (user != null) {
                             listOfTransactions.add("${name} hat ${amount}€ bezahlt!")
                             UserService.instance.pay(name, amount, Users.USERS.CURRENT_PENALTIES)
-                            UserPenaltyPaymentService.instance.pay(user.id, amount)
+                            UserPenaltyPaymentService.instance.pay(
+                                    user.id,
+                                    amount,
+                                    messageContext.user().userName
+                            )
                         } else {
                             listOfTransactions.add("${name} konnte NICHT in der Datenbank gefunden werden. Bezahlung " +
                                     "erneut durchführen!!!")
@@ -208,7 +216,12 @@ class TeamFundsBot constructor(val envBotToken: String, val botName: String) : A
                                 UserService.instance.updateUser(name, userRecord)
 
                                 //create new single penalty entry
-                                UserPenaltyService.instance.createUserPenalty(userRecord.id, penaltyRecord.id, amount)
+                                UserPenaltyService.instance.createUserPenalty(
+                                        userRecord.id,
+                                        penaltyRecord.id,
+                                        amount,
+                                        messageContext.user().userName
+                                )
 
                                 //create bot replies
                                 listOfTransactions.add("Update Strafen für  ${userRecord.name}")
