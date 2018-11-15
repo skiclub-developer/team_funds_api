@@ -25,7 +25,7 @@ class Jooq private constructor() {
             e.printStackTrace()
             null
         }
-        val CREATE = DSL.using(connection, SQLDialect.MYSQL)
+        val CREATE = DSL.using(connection, SQLDialect.POSTGRES_10)
     }
 
     companion object {

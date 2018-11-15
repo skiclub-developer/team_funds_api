@@ -2,7 +2,7 @@ package service
 
 import de.pengelkes.jooq.model.tables.UserPenaltyPayments.USER_PENALTY_PAYMENTS
 import de.pengelkes.jooq.model.tables.records.UserPenaltyPaymentsRecord
-import java.sql.Date
+import java.sql.Timestamp
 
 class UserPenaltyPaymentService private constructor() {
     object Holder {
@@ -17,7 +17,7 @@ class UserPenaltyPaymentService private constructor() {
         val record = UserPenaltyPaymentsRecord()
         record.userId = userId
         record.amount = amount
-        record.paidAt = Date(System.currentTimeMillis())
+        record.paidAt = Timestamp(System.currentTimeMillis())
         record.changedBy = auditUser
 
         record.store()

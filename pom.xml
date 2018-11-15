@@ -21,9 +21,9 @@
             <version>5.2.1</version>
         </dependency>
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>6.0.3</version>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.2.5</version>
         </dependency>
         <dependency>
             <groupId>org.jooq</groupId>
@@ -108,15 +108,15 @@
                 <artifactId>flyway-maven-plugin</artifactId>
                 <version>5.2.1</version>
                 <configuration>
-                    <url>jdbc:mysql://localhost:8889/team_funds</url>
-                    <user>root</user>
-                    <password>root</password>
+                    <url>jdbc:postgresql://localhost:5433/team_funds</url>
+                    <user>postgres</user>
+                    <password>Anmeldung1.</password>
                 </configuration>
                 <dependencies>
                     <dependency>
-                        <groupId>mysql</groupId>
-                        <artifactId>mysql-connector-java</artifactId>
-                        <version>6.0.3</version>
+                        <groupId>org.postgresql</groupId>
+                        <artifactId>postgresql</artifactId>
+                        <version>42.2.5</version>
                     </dependency>
                 </dependencies>
                 <executions>
@@ -155,18 +155,24 @@
 
                 <configuration>
                     <jdbc>
-                        <driver>${jdbc.driver}</driver>
-                        <url>${jdbc.url}</url>
-                        <user>${jdbc.user}</user>
-                        <password>${jdbc.password}</password>
+                        <driver>org.postgresql.Driver</driver>
+                        <url>jdbc:postgresql://localhost:5433/team_funds</url>
+                        <user>postgres</user>
+                        <password>Anmeldung1.</password>
                     </jdbc>
 
                     <generator>
                         <database>
-                            <name>org.jooq.meta.mysql.MySQLDatabase</name>
+                            <name>org.jooq.meta.postgres.PostgresDatabase</name>
+                            <schemata>
+                                <schema>
+                                    <inputSchema>public</inputSchema>
+                                    <outputSchema>public</outputSchema>
+                                </schema>
+                            </schemata>
                             <includes>.*</includes>
                             <excludes/>
-                            <inputSchema>team_funds</inputSchema>
+                            <inputSchema>public</inputSchema>
                         </database>
                         <target>
                             <packageName>de.pengelkes.jooq.model</packageName>

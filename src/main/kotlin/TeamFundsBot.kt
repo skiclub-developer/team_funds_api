@@ -4,6 +4,8 @@ import org.telegram.abilitybots.api.bot.AbilityBot
 import org.telegram.abilitybots.api.objects.Ability
 import org.telegram.abilitybots.api.objects.Locality
 import org.telegram.abilitybots.api.objects.Privacy
+import org.telegram.telegrambots.meta.api.objects.Update
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton
 import service.*
 
 
@@ -30,7 +32,12 @@ class TeamFundsBot constructor(val envBotToken: String, val botName: String) : A
                     }
                     listOfTransactions.print(silent, messageContext.chatId())
                 }
+
                 .build()
+    }
+
+    override fun onUpdateReceived(update: Update?) {
+        val test: KeyboardButton
     }
 
     fun addArbitraryBeerPenalty(): Ability {
