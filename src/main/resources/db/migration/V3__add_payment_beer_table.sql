@@ -1,10 +1,16 @@
-CREATE TABLE `team_funds`.`user_penalty_beer_payments`
+create table user_penalty_beer_payments
 (
-  `id`      INT NOT NULL AUTO_INCREMENT,
-  `user_id` INT NOT NULL,
-  `amount`  INT NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE = InnoDB;
+  id      serial not null,
+  user_id int    not null
+    constraint user_penalty_beer_payments_users_id_fk
+      references users (id),
+  amount  int    not null
+);
 
-ALTER TABLE `user_penalty_beer_payments`
-  ADD CONSTRAINT `user_penalty_beer_payments_foreign_key_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
+create unique index user_penalty_beer_payments_id_uindex
+  on user_penalty_beer_payments (id);
+
+alter table user_penalty_beer_payments
+  add constraint user_penalty_beer_payments_pk
+    primary key (id);
+

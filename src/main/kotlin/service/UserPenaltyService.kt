@@ -3,7 +3,7 @@ package service
 import de.pengelkes.jooq.model.tables.Penalties.PENALTIES
 import de.pengelkes.jooq.model.tables.UserPenalties.USER_PENALTIES
 import de.pengelkes.jooq.model.tables.records.UserPenaltiesRecord
-import java.sql.Date
+import java.sql.Timestamp
 
 class UserPenaltyService private constructor() {
     private object Holder {
@@ -50,10 +50,10 @@ class UserPenaltyService private constructor() {
                 .set(USER_PENALTIES.AMOUNT, amount)
                 .set(USER_PENALTIES.USER_ID, userId)
                 .set(USER_PENALTIES.PENALTY_ID, penaltyId)
-                .set(USER_PENALTIES.CREATED_AT, Date(System.currentTimeMillis()))
+                .set(USER_PENALTIES.CREATED_AT, Timestamp(System.currentTimeMillis()))
                 .set(USER_PENALTIES.CHANGED_BY, auditUser)
                 .execute()
     }
 }
 
-data class UserPenaltyListModel(val amount: Int, val createdAt: Date, val changedBy: String, val penaltyName: String)
+data class UserPenaltyListModel(val amount: Int, val createdAt: Timestamp, val changedBy: String, val penaltyName: String)

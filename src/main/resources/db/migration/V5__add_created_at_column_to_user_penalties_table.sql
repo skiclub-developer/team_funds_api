@@ -1,2 +1,2 @@
-ALTER TABLE `user_penalties`
-  ADD COLUMN `created_at` DATE
+ALTER TABLE user_penalties
+  ADD COLUMN created_at timestamp

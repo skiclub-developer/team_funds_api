@@ -6,7 +6,7 @@
 
     <groupId>de.pengelkes</groupId>
     <artifactId>team_funds_api</artifactId>
-    <version>1.1.0</version>
+    <version>1.2.0-SNAPSHOT</version>
 
     <properties>
         <kotlin.version>1.3.0-rc-198</kotlin.version>
@@ -21,9 +21,9 @@
             <version>5.2.1</version>
         </dependency>
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>6.0.3</version>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.2.5</version>
         </dependency>
         <dependency>
             <groupId>org.jooq</groupId>
@@ -104,6 +104,31 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <version>5.2.1</version>
+                <configuration>
+                    <url>jdbc:postgresql://localhost:5433/team_funds</url>
+                    <user>postgres</user>
+                    <password>Anmeldung1.</password>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.postgresql</groupId>
+                        <artifactId>postgresql</artifactId>
+                        <version>42.2.5</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>migrate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
 
                 <!-- Specify the maven code generator plugin -->
                 <!-- Use org.jooq            for the Open Source Edition
@@ -119,6 +144,7 @@
 
                 <executions>
                     <execution>
+                        <phase>generate-sources</phase>
                         <goals>
                             <goal>generate</goal>
                         </goals>
@@ -129,18 +155,24 @@
 
                 <configuration>
                     <jdbc>
-                        <driver>${jdbc.driver}</driver>
-                        <url>${jdbc.url}</url>
-                        <user>${jdbc.user}</user>
-                        <password>${jdbc.password}</password>
+                        <driver>org.postgresql.Driver</driver>
+                        <url>jdbc:postgresql://localhost:5433/team_funds</url>
+                        <user>postgres</user>
+                        <password>Anmeldung1.</password>
                     </jdbc>
 
                     <generator>
                         <database>
-                            <name>org.jooq.meta.mysql.MySQLDatabase</name>
+                            <name>org.jooq.meta.postgres.PostgresDatabase</name>
+                            <schemata>
+                                <schema>
+                                    <inputSchema>public</inputSchema>
+                                    <outputSchema>public</outputSchema>
+                                </schema>
+                            </schemata>
                             <includes>.*</includes>
                             <excludes/>
-                            <inputSchema>team_funds</inputSchema>
+                            <inputSchema>public</inputSchema>
                         </database>
                         <target>
                             <packageName>de.pengelkes.jooq.model</packageName>
@@ -148,23 +180,6 @@
                         </target>
                     </generator>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.flywaydb</groupId>
-                <artifactId>flyway-maven-plugin</artifactId>
-                <version>5.2.1</version>
-                <configuration>
-                    <url>jdbc:mysql://localhost:3307/team_funds</url>
-                    <user>root</user>
-                    <password>my-secret-pw</password>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>mysql</groupId>
-                        <artifactId>mysql-connector-java</artifactId>
-                        <version>6.0.3</version>
-                    </dependency>
-                </dependencies>
             </plugin>
         </plugins>
     </build>
@@ -200,18 +215,6 @@
                     </plugin>
                 </plugins>
             </build>
-        </profile>
-        <profile>
-            <id>default</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <jdbc.user>root</jdbc.user>
-                <jdbc.password>root</jdbc.password>
-                <jdbc.url>jdbc:mysql://localhost:8889/team_funds?serverTimezone=UTC</jdbc.url>
-                <jdbc.driver>com.mysql.cj.jdbc.Driver</jdbc.driver>
-            </properties>
         </profile>
     </profiles>
 </project>

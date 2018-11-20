@@ -1,44 +1,23 @@
--- phpMyAdmin SQL Dump
--- version 4.8.3
--- https://www.phpmyadmin.net/
---
--- Host: localhost:8889
--- Erstellungszeit: 27. Okt 2018 um 14:46
--- Server-Version: 5.7.23
--- PHP-Version: 7.2.8
-
-SET
-SQL_MODE
-=
-"NO_AUTO_VALUE_ON_ZERO";
-SET
-time_zone
-=
-"+00:00";
-
---
--- Datenbank: `team_funds`
---
-
--- --------------------------------------------------------
-
---
--- Tabellenstruktur für Tabelle `penalties`
---
-
-CREATE TABLE `penalties`
+create table penalties
 (
-  `id`                int(11) NOT NULL,
-  `penalty_name`      varchar(255) NOT NULL,
-  `penalty_cost`      int(11) NOT NULL,
-  `case_of_beer_cost` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  id                serial,
+  penalty_name      varchar(255) not null,
+  penalty_cost      int          not null,
+  case_of_beer_cost int          not null
+);
+
+create unique index penalties_id_uindex
+  on penalties (id);
+
+alter table penalties
+  add constraint penalties_pk
+    primary key (id);
 
 --
 -- Daten für Tabelle `penalties`
 --
 
-INSERT INTO `penalties` (`id`, `penalty_name`, `penalty_cost`, `case_of_beer_cost`)
+INSERT INTO penalties (id, penalty_name, penalty_cost, case_of_beer_cost)
 VALUES
        (1, 'tunnel', 1, 0),
        (2, 'runde', 1, 0),
@@ -70,19 +49,26 @@ VALUES
 -- Tabellenstruktur für Tabelle `users`
 --
 
-CREATE TABLE `users`
+CREATE TABLE users
 (
-  `id`                int(11) NOT NULL,
-  `name`              varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
-  `current_penalties` int(11) NOT NULL DEFAULT 0,
-  `case_of_beer`      int(11) NOT NULL DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  id                int          NOT NULL,
+  name              varchar(255) NOT NULL,
+  current_penalties int          NOT NULL DEFAULT 0,
+  case_of_beer      int          NOT NULL DEFAULT 0
+);
+
+create unique index users_id_uindex
+  on users (id);
+
+alter table users
+  add constraint users_pk
+    primary key (id);
 
 --
 -- Daten für Tabelle `users`
 --
 
-INSERT INTO `users` (`id`, `name`)
+INSERT INTO users (id, name)
 VALUES
        (1, 'Katze'),
        (2, 'Christian'),
@@ -112,74 +98,22 @@ VALUES
        (26, 'Spölle'),
        (27, 'Patti');
 
--- --------------------------------------------------------
-
---
--- Tabellenstruktur für Tabelle `user_penalties`
---
-
-CREATE TABLE `user_penalties`
+create table user_penalties
 (
-  `id`         int(11) NOT NULL,
-  `user_id`    int(11) NOT NULL,
-  `penalty_id` int(11) NOT NULL,
-  `amount`     int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  id         serial not null,
+  user_id    int    not null
+    constraint user_penalties_users_id_fk
+      references users (id),
+  penalty_id int    not null
+    constraint user_penalties_penalties_id_fk
+      references penalties (id),
+  amount     int    not null
+);
 
---
--- Indizes der exportierten Tabellen
---
+create unique index user_penalties_id_uindex
+  on user_penalties (id);
 
---
--- Indizes für die Tabelle `penalties`
---
-ALTER TABLE `penalties`
-  ADD PRIMARY KEY (`id`);
+alter table user_penalties
+  add constraint user_penalties_pk
+    primary key (id);
 
---
--- Indizes für die Tabelle `users`
---
-ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `unique_name_index` (`name`);
-
---
--- Indizes für die Tabelle `user_penalties`
---
-ALTER TABLE `user_penalties`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `penalty_foreign_key` (`penalty_id`),
-  ADD KEY `user_foreign_key` (`user_id`);
-
---
--- AUTO_INCREMENT für exportierte Tabellen
---
-
---
--- AUTO_INCREMENT für Tabelle `penalties`
---
-ALTER TABLE `penalties`
-  MODIFY `id` int (11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
-
---
--- AUTO_INCREMENT für Tabelle `users`
---
-ALTER TABLE `users`
-  MODIFY `id` int (11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
---
--- AUTO_INCREMENT für Tabelle `user_penalties`
---
-ALTER TABLE `user_penalties`
-  MODIFY `id` int (11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
-
---
--- Constraints der exportierten Tabellen
---
-
---
--- Constraints der Tabelle `user_penalties`
---
-ALTER TABLE `user_penalties`
-  ADD CONSTRAINT `penalty_foreign_key` FOREIGN KEY (`penalty_id`) REFERENCES `penalties` (`id`),
-  ADD CONSTRAINT `user_foreign_key` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);

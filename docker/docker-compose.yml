@@ -2,29 +2,29 @@ version: '3.1'
 
 services:
   db:
-    image: mysql:5.7
-    restart: always
-    command: --default-authentication-plugin=mysql_native_password
+    image: postgres:10.6-alpine
     volumes:
-      - data-volume:/var/lib/mysql
+      - team_funds-data-volume:/var/lib/postgresql/data
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: team_funds
+      POSTGRES_DB: team_funds
+      POSTGRES_PASSWORD: Anmeldung1.
+      POSTGRES_USER: postgres
+      PGDATA: /tmp
     ports:
-      - 3307:3306
+      - 5434:5432
 
   bot:
     image: skiclubdeveloper/team_funds
     environment:
-      TEAM_FUNDS_DB_URL: jdbc:mysql://db:3306/team_funds
-      TEAM_FUNDS_DB_USER: ${TEAM_FUNDS_DB_USER}
-      TEAM_FUNDS_DB_PASSWORD: ${TEAM_FUNDS_DB_PASSWORD}
-      TEAM_FUNDS_BOT_TOKEN: ${TEAM_FUNDS_BOT_TOKEN}
-      TEAM_FUNDS_BOT_NAME: ${TEAM_FUNDS_BOT_NAME}
+      TEAM_FUNDS_DB_URL: jdbc:postgresql://db:5432/team_funds
+      TEAM_FUNDS_DB_USER: postgres
+      TEAM_FUNDS_DB_PASSWORD: Anmeldung1.
+      TEAM_FUNDS_BOT_TOKEN: 762317235:AAGAVpEswx5aAuf8ZjueYfAGCkP7bTy9fIQ
+      TEAM_FUNDS_BOT_NAME: skiclub_staging_bot
     restart: on-failure
     depends_on:
       - db
 
 volumes:
-  data-volume:
+  team_funds-data-volume:
 

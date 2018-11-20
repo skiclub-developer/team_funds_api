@@ -30,6 +30,7 @@ class TeamFundsBot constructor(val envBotToken: String, val botName: String) : A
                     }
                     listOfTransactions.print(silent, messageContext.chatId())
                 }
+
                 .build()
     }
 
@@ -182,7 +183,7 @@ class TeamFundsBot constructor(val envBotToken: String, val botName: String) : A
                             val userName = messageUser.userName ?: messageUser.firstName+" "+messageUser.lastName
 
                             UserPenaltyBeerPaymentService.instance.pay(
-                                    messageUser.id,
+                                    user.id,
                                     amount,
                                     userName
                             )
