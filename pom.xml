@@ -216,17 +216,5 @@
                 </plugins>
             </build>
         </profile>
-        <profile>
-            <id>default</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <jdbc.user>root</jdbc.user>
-                <jdbc.password>root</jdbc.password>
-                <jdbc.url>jdbc:mysql://localhost:8889/team_funds?serverTimezone=UTC</jdbc.url>
-                <jdbc.driver>com.mysql.cj.jdbc.Driver</jdbc.driver>
-            </properties>
-        </profile>
     </profiles>
 </project>

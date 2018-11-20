@@ -4,8 +4,6 @@ import org.telegram.abilitybots.api.bot.AbilityBot
 import org.telegram.abilitybots.api.objects.Ability
 import org.telegram.abilitybots.api.objects.Locality
 import org.telegram.abilitybots.api.objects.Privacy
-import org.telegram.telegrambots.meta.api.objects.Update
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton
 import service.*
 
 
@@ -34,10 +32,6 @@ class TeamFundsBot constructor(val envBotToken: String, val botName: String) : A
                 }
 
                 .build()
-    }
-
-    override fun onUpdateReceived(update: Update?) {
-        val test: KeyboardButton
     }
 
     fun addArbitraryBeerPenalty(): Ability {
@@ -189,7 +183,7 @@ class TeamFundsBot constructor(val envBotToken: String, val botName: String) : A
                             val userName = messageUser.userName ?: messageUser.firstName+" "+messageUser.lastName
 
                             UserPenaltyBeerPaymentService.instance.pay(
-                                    messageUser.id,
+                                    user.id,
                                     amount,
                                     userName
                             )

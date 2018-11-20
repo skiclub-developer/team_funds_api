@@ -14,14 +14,12 @@ class UserPenaltyBeerPaymentService private constructor() {
     }
 
     fun pay(userId: Int, amount: Int, auditUser: String) {
-        val record = UserPenaltyBeerPaymentsRecord()
-
-        record.userId = userId
-        record.amount = amount
-        record.paidAt = Timestamp(System.currentTimeMillis())
-        record.changedBy = auditUser
-
-        record.store()
+        Jooq.instance.insertInto(USER_PENALTY_BEER_PAYMENTS)
+                .set(USER_PENALTY_BEER_PAYMENTS.USER_ID, userId)
+                .set(USER_PENALTY_BEER_PAYMENTS.AMOUNT, amount)
+                .set(USER_PENALTY_BEER_PAYMENTS.PAID_AT, Timestamp(System.currentTimeMillis()))
+                .set(USER_PENALTY_BEER_PAYMENTS.CHANGED_BY, auditUser)
+                .execute()
     }
 
     fun getPaymentsForUser(userId: Int): List<UserPenaltyBeerPaymentsRecord> {

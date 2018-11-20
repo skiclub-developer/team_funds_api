@@ -14,13 +14,12 @@ class UserPenaltyPaymentService private constructor() {
     }
 
     fun pay(userId: Int, amount: Int, auditUser: String) {
-        val record = UserPenaltyPaymentsRecord()
-        record.userId = userId
-        record.amount = amount
-        record.paidAt = Timestamp(System.currentTimeMillis())
-        record.changedBy = auditUser
-
-        record.store()
+        Jooq.instance.insertInto(USER_PENALTY_PAYMENTS)
+                .set(USER_PENALTY_PAYMENTS.USER_ID, userId)
+                .set(USER_PENALTY_PAYMENTS.AMOUNT, amount)
+                .set(USER_PENALTY_PAYMENTS.PAID_AT, Timestamp(System.currentTimeMillis()))
+                .set(USER_PENALTY_PAYMENTS.CHANGED_BY, auditUser)
+                .execute()
     }
 
     fun getPaymentsForUser(userId: Int): List<UserPenaltyPaymentsRecord> {
