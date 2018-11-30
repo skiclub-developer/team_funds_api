@@ -14,7 +14,7 @@ services:
       - 5434:5432
 
   bot:
-    image: skiclubdeveloper/team_funds
+    image: skiclubdeveloper/team_funds:v1.2.0
     environment:
       TEAM_FUNDS_DB_URL: jdbc:postgresql://db:5432/team_funds
       TEAM_FUNDS_DB_USER: postgres
