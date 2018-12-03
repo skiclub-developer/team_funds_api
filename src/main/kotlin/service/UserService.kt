@@ -45,7 +45,7 @@ class UserService private constructor() {
     }
 
     fun getByName(name: String): UsersRecord? {
-        val record = Jooq.instance.select().from(USERS).where(USERS.NAME.eq(name)).fetchOne()
+        val record = Jooq.instance.select().from(USERS).where(USERS.NAME.equalIgnoreCase(name)).fetchOne()
         if (record != null) {
             return record.into(UsersRecord::class.java)
         }
