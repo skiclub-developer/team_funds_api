@@ -142,6 +142,22 @@ class TeamFundsBot constructor(val envBotToken: String, val botName: String) : A
                 .build()
     }
 
+    fun allOpenPenalties(): Ability {
+        return Ability
+                .builder()
+                .name("offenalle")
+                .locality(Locality.GROUP)
+                .privacy(Privacy.PUBLIC)
+                .action { messageContext ->
+                    var penaltyString = ""
+                    val players = UserService.instance.getAll()
+                    players.forEach { player ->
+                        penaltyString += "${player.name} ${player.currentPenalties}€, ${player.caseOfBeer}K. \n"
+                    }
+                    silent.send(penaltyString, messageContext.chatId())
+                }.build()
+    }
+
     fun openPenalties(): Ability {
         return Ability
                 .builder()
