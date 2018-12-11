@@ -1,6 +1,7 @@
 package service
 
-import de.pengelkes.jooq.model.tables.Penalties
+import de.pengelkes.jooq.model.tables.Penalties.PENALTIES
+import de.pengelkes.jooq.model.tables.records.PenaltiesRecord
 import org.jooq.Record
 import org.jooq.Result
 
@@ -14,6 +15,13 @@ class PenaltyService private constructor() {
     }
 
     fun getAll(): Result<Record> {
-        return Jooq.instance.select().from(Penalties.PENALTIES).fetch()
+        return Jooq.instance.select().from(PENALTIES).fetch()
+    }
+
+    fun getByName(name: String): PenaltiesRecord {
+        return Jooq.instance.select()
+                .from(PENALTIES)
+                .where(PENALTIES.PENALTY_NAME.eq(name))
+                .fetchOneInto(PenaltiesRecord::class.java)
     }
 }

@@ -142,6 +142,22 @@ class TeamFundsBot constructor(val envBotToken: String, val botName: String) : A
                 .build()
     }
 
+    fun allOpenPenalties(): Ability {
+        return Ability
+                .builder()
+                .name("offenalle")
+                .locality(Locality.GROUP)
+                .privacy(Privacy.PUBLIC)
+                .action { messageContext ->
+                    var penaltyString = ""
+                    val players = UserService.instance.getAll()
+                    players.forEach { player ->
+                        penaltyString += "${player.name} ${player.currentPenalties}€, ${player.caseOfBeer}K. \n"
+                    }
+                    silent.send(penaltyString, messageContext.chatId())
+                }.build()
+    }
+
     fun openPenalties(): Ability {
         return Ability
                 .builder()
@@ -179,13 +195,10 @@ class TeamFundsBot constructor(val envBotToken: String, val botName: String) : A
                             listOfTransactions.add(" ${name} hat ${amount} Kisten geschmissen!")
                             UserService.instance.pay(name, amount, Users.USERS.CASE_OF_BEER)
 
-                            val messageUser = messageContext.user()
-                            val userName = messageUser.userName ?: messageUser.firstName+" "+messageUser.lastName
-
                             UserPenaltyBeerPaymentService.instance.pay(
                                     user.id,
                                     amount,
-                                    userName
+                                    messageContext.getUserName()
                             )
                         } else {
                             listOfTransactions.add("${name} konnte NICHT in der Datenbank gefunden werden. Bezahlung " +
@@ -212,12 +225,10 @@ class TeamFundsBot constructor(val envBotToken: String, val botName: String) : A
                             listOfTransactions.add("${name} hat ${amount}€ bezahlt!")
                             UserService.instance.pay(name, amount, Users.USERS.CURRENT_PENALTIES)
 
-                            val messageUser = messageContext.user()
-                            val userName = messageUser.userName ?: messageUser.firstName+" "+messageUser.lastName
                             UserPenaltyPaymentService.instance.pay(
                                     user.id,
                                     amount,
-                                    userName
+                                    messageContext.getUserName()
                             )
                         } else {
                             listOfTransactions.add("${name} konnte NICHT in der Datenbank gefunden werden. Bezahlung " +
@@ -248,17 +259,13 @@ class TeamFundsBot constructor(val envBotToken: String, val botName: String) : A
                                 //update summed up penalties
                                 userRecord.currentPenalties = userRecord.currentPenalties + cost
                                 userRecord.caseOfBeer = userRecord.caseOfBeer + numberOfCasesOfBeer
-                                UserService.instance.updateUser(name, userRecord)
-
-                                //create new single penalty entry
-                                val user = messageContext.user()
-                                val userName = user.userName ?: user.firstName+" "+user.lastName
+                                UserService.instance.updateUser(userRecord)
 
                                 UserPenaltyService.instance.createUserPenalty(
                                         userRecord.id,
                                         penaltyRecord.id,
                                         amount,
-                                        userName
+                                        messageContext.getUserName()
                                 )
 
                                 //create bot replies
@@ -280,5 +287,30 @@ class TeamFundsBot constructor(val envBotToken: String, val botName: String) : A
         }
 
         return abilities
+    }
+
+    fun lostGamePlayers(): Ability {
+        return Ability
+                .builder()
+                .name("spielverlorenalle")
+                .locality(Locality.GROUP)
+                .privacy(Privacy.ADMIN)
+                .action { messageContext ->
+                    var penaltyString = "";
+                    UserService.instance.getAllPlayers().forEach {
+                        val penaltyRecord = PenaltyService.instance.getByName("pflichtSpielVerloren")
+                        it.currentPenalties = it.currentPenalties + penaltyRecord.penaltyCost
+                        UserService.instance.updateUser(it)
+                        UserPenaltyService.instance.createUserPenalty(
+                                it.id,
+                                penaltyRecord.id,
+                                penaltyRecord.penaltyCost,
+                                messageContext.getUserName()
+                        )
+                        penaltyString += "${it.name}s Strafen wurden um ${penaltyRecord.penaltyCost}€ erhöht. \n"
+                    }
+                    silent.send(penaltyString, messageContext.chatId())
+                }
+                .build()
     }
 }
