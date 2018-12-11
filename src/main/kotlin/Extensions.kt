@@ -1,3 +1,4 @@
+import org.telegram.abilitybots.api.objects.MessageContext
 import org.telegram.abilitybots.api.sender.SilentSender
 
 data class PlayerAmountModel constructor(val name: String, val amount: Int)
@@ -24,4 +25,9 @@ fun List<String>.print(silent: SilentSender, chatId: Long) {
     this.forEach {
         silent.send(it, chatId)
     }
+}
+
+fun MessageContext.getUserName(): String {
+    val user = this.user()
+    return user.userName ?: user.firstName+" "+user.lastName
 }

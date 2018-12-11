@@ -86,7 +86,7 @@
                 <executions>
                     <execution>
                         <id>compile</id>
-                        <phase>compile</phase>
+                        <phase>process-sources</phase>
                         <goals>
                             <goal>compile</goal>
                         </goals>
@@ -173,6 +173,14 @@
                             <includes>.*</includes>
                             <excludes/>
                             <inputSchema>public</inputSchema>
+                            <forcedTypes>
+                                <forcedType>
+                                    <userType>service.UserType</userType>
+
+                                    <converter>service.UserTypeConverter</converter>
+                                    <expression>.*\.users\.type</expression>
+                                </forcedType>
+                            </forcedTypes>
                         </database>
                         <target>
                             <packageName>de.pengelkes.jooq.model</packageName>

@@ -6,6 +6,7 @@ import DB_USER
 import org.jooq.DSLContext
 import org.jooq.SQLDialect
 import org.jooq.impl.DSL
+import org.jooq.impl.EnumConverter
 import java.sql.DriverManager
 
 class Jooq private constructor() {
@@ -32,3 +33,11 @@ class Jooq private constructor() {
         val instance: DSLContext by lazy { Holder.CREATE }
     }
 }
+
+enum class UserType {
+    PLAYER,
+    COACH,
+    ADVISOR
+}
+
+class UserTypeConverter : EnumConverter<String, UserType>(String::class.java, UserType::class.java)

@@ -23,10 +23,17 @@ class UserService private constructor() {
         return userRecords
     }
 
-    fun updateUser(name: String, record: UsersRecord) {
+    fun getAllPlayers(): List<UsersRecord> {
+        return Jooq.instance.select()
+                .from(USERS)
+                .where(USERS.TYPE.eq(UserType.PLAYER))
+                .fetchInto(UsersRecord::class.java)
+    }
+
+    fun updateUser(record: UsersRecord) {
         Jooq.instance.update(USERS)
                 .set(record)
-                .where(USERS.NAME.eq(name))
+                .where(USERS.ID.eq(record.id))
                 .execute()
     }
 
