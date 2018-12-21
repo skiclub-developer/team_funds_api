@@ -26,7 +26,7 @@ class UserService private constructor() {
     fun getAllPlayers(): List<UsersRecord> {
         return Jooq.instance.select()
                 .from(USERS)
-                .where(USERS.TYPE.eq(UserType.PLAYER))
+                .where(USERS.TYPE.eq(UserType.PLAYER.toString()))
                 .fetchInto(UsersRecord::class.java)
     }
 
