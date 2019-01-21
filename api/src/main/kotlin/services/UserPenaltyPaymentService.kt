@@ -1,7 +1,6 @@
-package service
+package services
 
 import de.pengelkes.jooq.model.tables.UserPenaltyPayments.USER_PENALTY_PAYMENTS
-import de.pengelkes.jooq.model.tables.records.UserPenaltyPaymentsRecord
 import java.sql.Timestamp
 
 class UserPenaltyPaymentService private constructor() {
@@ -10,22 +9,27 @@ class UserPenaltyPaymentService private constructor() {
     }
 
     companion object {
+        val ROUTE = "userPenaltyPayment"
         val instance: UserPenaltyPaymentService by lazy { Holder.OBJECT }
     }
 
-    fun pay(userId: Int, amount: Int, auditUser: String) {
+    fun pay(model: UserPenaltyPaymentModel) {
         Jooq.instance.insertInto(USER_PENALTY_PAYMENTS)
-                .set(USER_PENALTY_PAYMENTS.USER_ID, userId)
-                .set(USER_PENALTY_PAYMENTS.AMOUNT, amount)
+                .set(USER_PENALTY_PAYMENTS.USER_ID, model.userId)
+                .set(USER_PENALTY_PAYMENTS.AMOUNT, model.amount)
                 .set(USER_PENALTY_PAYMENTS.PAID_AT, Timestamp(System.currentTimeMillis()))
-                .set(USER_PENALTY_PAYMENTS.CHANGED_BY, auditUser)
+                .set(USER_PENALTY_PAYMENTS.CHANGED_BY, model.changedBy)
                 .execute()
     }
 
-    fun getPaymentsForUser(userId: Int): List<UserPenaltyPaymentsRecord> {
+    fun getByUser(userId: Int): List<UserPenaltyPaymentModel> {
         return Jooq.instance.select().from(USER_PENALTY_PAYMENTS)
                 .where(USER_PENALTY_PAYMENTS.USER_ID.eq(userId))
                 .orderBy(USER_PENALTY_PAYMENTS.PAID_AT.desc())
-                .fetchInto(UserPenaltyPaymentsRecord::class.java)
+                .fetchInto(UserPenaltyPaymentModel::class.java)
     }
 }
+
+data class UserPenaltyPaymentModel(val id: Int = -1, val userId: Int, val amount: Int,
+                                   val paidAt: Timestamp = Timestamp(System.currentTimeMillis()),
+                                   val changedBy: String)

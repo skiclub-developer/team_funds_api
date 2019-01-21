@@ -4,37 +4,21 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>de.pengelkes</groupId>
+    <groupId>de.pengelkes.team_funds</groupId>
     <artifactId>team_funds_api</artifactId>
-    <version>1.3.1</version>
+    <packaging>pom</packaging>
+    <version>1.4.0-SNAPSHOT</version>
+
+    <modules>
+        <module>api</module>
+        <module>bot</module>
+    </modules>
 
     <properties>
-        <kotlin.version>1.3.0-rc-198</kotlin.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <kotlin.version>1.3.11</kotlin.version>
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>
-            <version>5.2.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>42.2.5</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jooq</groupId>
-            <artifactId>jooq</artifactId>
-            <version>3.11.5</version>
-        </dependency>
-        <dependency>
-            <groupId>org.telegram</groupId>
-            <artifactId>telegrambots-abilities</artifactId>
-            <version>4.1</version>
-        </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib-jdk8</artifactId>
@@ -48,36 +32,7 @@
         </dependency>
     </dependencies>
 
-    <repositories>
-        <repository>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <id>bintray.kotlin.eap</id>
-            <name>Bintray Kotlin EAP Repository</name>
-            <url>http://dl.bintray.com/kotlin/kotlin-eap</url>
-        </repository>
-    </repositories>
-
-    <pluginRepositories>
-        <pluginRepository>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <id>bintray.kotlin.eap</id>
-            <name>Bintray Kotlin EAP Repository</name>
-            <url>http://dl.bintray.com/kotlin/kotlin-eap</url>
-        </pluginRepository>
-    </pluginRepositories>
-
     <build>
-        <sourceDirectory>src/main/kotlin</sourceDirectory>
         <plugins>
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
@@ -90,6 +45,13 @@
                         <goals>
                             <goal>compile</goal>
                         </goals>
+                        <configuration>
+                            <sourceDirs>
+                                <source>bot/src/main/kotlin</source>
+                                <source>target/generated-sources/jooq</source>
+                                <source>src/main/kotlin</source>
+                            </sourceDirs>
+                        </configuration>
                     </execution>
                     <execution>
                         <id>test-compile</id>
@@ -104,117 +66,35 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.flywaydb</groupId>
-                <artifactId>flyway-maven-plugin</artifactId>
-                <version>5.2.1</version>
-                <configuration>
-                    <url>jdbc:postgresql://localhost:5433/team_funds</url>
-                    <user>postgres</user>
-                    <password>Anmeldung1.</password>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.postgresql</groupId>
-                        <artifactId>postgresql</artifactId>
-                        <version>42.2.5</version>
-                    </dependency>
-                </dependencies>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
                 <executions>
                     <execution>
-                        <phase>generate-sources</phase>
+                        <id>default-compile</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>default-testCompile</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>compile</id>
+                        <phase>compile</phase>
                         <goals>
-                            <goal>migrate</goal>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>testCompile</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>testCompile</goal>
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-
-                <!-- Specify the maven code generator plugin -->
-                <!-- Use org.jooq            for the Open Source Edition
-                         org.jooq.pro        for commercial editions,
-                         org.jooq.pro-java-6 for commercial editions with Java 6 support,
-                         org.jooq.trial      for the free trial edition
-
-                     Note: Only the Open Source Edition is hosted on Maven Central.
-                           Import the others manually from your distribution -->
-                <groupId>org.jooq</groupId>
-                <artifactId>jooq-codegen-maven</artifactId>
-                <version>3.11.5</version>
-
-                <executions>
-                    <execution>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                    </execution>
-                </executions>
-
-                <dependencies/>
-
-                <configuration>
-                    <jdbc>
-                        <driver>org.postgresql.Driver</driver>
-                        <url>jdbc:postgresql://localhost:5433/team_funds</url>
-                        <user>postgres</user>
-                        <password>Anmeldung1.</password>
-                    </jdbc>
-
-                    <generator>
-                        <database>
-                            <name>org.jooq.meta.postgres.PostgresDatabase</name>
-                            <schemata>
-                                <schema>
-                                    <inputSchema>public</inputSchema>
-                                    <outputSchema>public</outputSchema>
-                                </schema>
-                            </schemata>
-                            <includes>.*</includes>
-                            <excludes/>
-                            <inputSchema>public</inputSchema>
-                        </database>
-                        <target>
-                            <packageName>de.pengelkes.jooq.model</packageName>
-                            <directory>target/generated-sources/jooq</directory>
-                        </target>
-                    </generator>
-                </configuration>
             </plugin>
         </plugins>
     </build>
 
-    <profiles>
-        <profile>
-            <id>build-jar-with-dependencies</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-assembly-plugin</artifactId>
-                        <version>3.1.0</version>
-                        <executions>
-                            <execution>
-                                <id>make-assembly</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>single</goal>
-                                </goals>
-                                <configuration>
-                                    <archive>
-                                        <manifest>
-                                            <mainClass>MainKt</mainClass>
-                                        </manifest>
-                                    </archive>
-                                    <descriptorRefs>
-                                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                                    </descriptorRefs>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
+
 </project>

@@ -9,7 +9,6 @@ services:
       POSTGRES_DB: team_funds
       POSTGRES_PASSWORD: ${TEAM_FUNDS_DB_PASSWORD}
       POSTGRES_USER: ${TEAM_FUNDS_DB_USER}
-      PGDATA: /tmp
 
   bot:
     image: skiclubdeveloper/team_funds

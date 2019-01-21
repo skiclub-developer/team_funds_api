@@ -1,4 +1,4 @@
-package service
+package services
 
 import DB_PASSWORD
 import DB_URL

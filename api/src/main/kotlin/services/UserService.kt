@@ -1,4 +1,4 @@
-package service
+package services
 
 import de.pengelkes.jooq.model.tables.Users.USERS
 import de.pengelkes.jooq.model.tables.records.UsersRecord
@@ -13,34 +13,31 @@ class UserService private constructor() {
         val instance: UserService by lazy { Holder.OBJECT }
     }
 
-    fun getAll(): List<UsersRecord> {
-        val userRecords = mutableListOf<UsersRecord>()
-        val result = Jooq.instance.select().from(USERS).fetch()
-        result.forEach {
-            userRecords.add(it.into(UsersRecord::class.java))
-        }
-
-        return userRecords
+    fun getAll(): List<UserModel> {
+        return Jooq.instance.select().from(USERS).fetchInto(UserModel::class.java)
     }
 
-    fun getAllPlayers(): List<UsersRecord> {
+    fun getByUserType(userType: String): List<UserModel> {
         return Jooq.instance.select()
                 .from(USERS)
-                .where(USERS.TYPE.eq(UserType.PLAYER.toString()))
-                .fetchInto(UsersRecord::class.java)
+                .where(USERS.TYPE.eq(UserType.valueOf(userType)))
+                .fetchInto(UserModel::class.java)
     }
 
-    fun updateUser(record: UsersRecord) {
+    fun updateUser(userModel: UserModel) {
         Jooq.instance.update(USERS)
-                .set(record)
-                .where(USERS.ID.eq(record.id))
+                .set(USERS.TYPE, userModel.type)
+                .set(USERS.CURRENT_PENALTIES, userModel.currentPenalties)
+                .set(USERS.NAME, userModel.name)
+                .set(USERS.CASE_OF_BEER, userModel.caseOfBeer)
+                .where(USERS.ID.eq(userModel.id))
                 .execute()
     }
 
-    fun pay(name: String, amount: Int, field: TableField<UsersRecord, Int>) {
+    fun pay(id: Int, amount: Int, field: TableField<UsersRecord, Int>) {
         Jooq.instance.update(USERS)
                 .set(field, field - amount)
-                .where(USERS.NAME.eq(name))
+                .where(USERS.ID.eq(id))
                 .execute()
     }
 
@@ -51,12 +48,15 @@ class UserService private constructor() {
                 .execute()
     }
 
-    fun getByName(name: String): UsersRecord? {
+    fun getByName(name: String): UserModel? {
         val record = Jooq.instance.select().from(USERS).where(USERS.NAME.equalIgnoreCase(name)).fetchOne()
         if (record != null) {
-            return record.into(UsersRecord::class.java)
+            return record.into(UserModel::class.java)
         }
 
         return null
     }
 }
+
+data class UserModel(val id: Int = -1, val name: String, val currentPenalties: Int,
+                     val caseOfBeer: Int, val type: UserType)
